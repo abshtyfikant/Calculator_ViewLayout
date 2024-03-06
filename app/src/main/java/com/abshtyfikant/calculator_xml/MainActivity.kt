@@ -2,7 +2,6 @@ package com.abshtyfikant.calculator_xml
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -43,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         //data variables
         var inputString = ""
         val operators = "+-*/"
-        val operationsMap = mapOf<String, Int>("+" to 1, "-" to -1)
+        val operationsMap = mapOf("+" to 1, "-" to -1)
 
         //Toast error message
         fun errorToast(){
@@ -60,8 +59,6 @@ class MainActivity : AppCompatActivity() {
                 else -> throw Exception("Operator conversion error.")
             }
         }
-
-
 
         //USER INPUT
         //digits
@@ -177,57 +174,42 @@ class MainActivity : AppCompatActivity() {
             if(inputString.last() in operators) outputText.text = inputString.dropLast(1)
             else if (inputString.count {it in operators} < 1) outputText.text = inputString
             else{
-                Log.w(null, "IN RESULT-ELSE")
-                //var numbersList: MutableList<Int>
                 val operationList = Regex("[+\\-*/]").findAll(inputString)
                     .map { it.value }
                     .toMutableList()
                 val numbersList = mutableListOf<Int>()
 
-                Log.w(null, "Input String: $inputString")
-
                 val tempNumbersList = inputString.split(Regex("[" + Regex.escape(operators) + "]"))
                 for(i in tempNumbersList) {
                     numbersList.add(i.toInt())
-                    Log.w(null, "Added $i")
                 }
-//                val tempOperationList = inputString.split(Regex("[\\+\\-\\*/]"))
-//                for(k in tempOperationList) {
-//                    operationList.add(k)
-//                    Log.w(null, "Operator Added $k")
-//                }
-//                inputString.split(Regex("[*\\-/+]")).forEach {
-//                    operationList.add(it)
-//                    Log.w(null, "Operator Added $it")
-//                }
 
                 val isDivOrMult = operationList.find{it == "*" || it == "/"} ?: ""
-                Log.w(null, "after finding * and /")
                 if(isDivOrMult != ""){
                     val operatorIndices = mutableListOf<Int>()
                     for (i in operationList.indices) {
-                        Log.w(null, "1st indices loop")
                         if (operationList[i] == "*" || operationList[i] == "/") {
                             operatorIndices.add(i)
                         }
                     }
                     for (i in operatorIndices){
-                        Log.w(null, "2nd indices loop")
                         numbersList[i+1] = operatorFromString(operationList[i]).invoke(
                             numbersList[i], numbersList[i+1])
                     }
-                    for (i in operatorIndices){
-                        Log.w(null, "3rd indices loop")
-                        numbersList.removeAt(i)
-                        operationList.removeAt(i)
+                    for ((foo, i) in operatorIndices.withIndex()){
+                        numbersList.removeAt(i - foo)
+                        operationList.removeAt(i - foo)
                     }
                 }
-                for (i in operationList.indices){
-                    Log.w(null, "4th indices loop")
-                    numbersList[i+1] *= operationsMap[operationList[i]]
-                        ?: throw Exception("Error in changing signs of numbers.")
+                if (operationList.isNotEmpty()) {
+                    for (i in operationList.indices) {
+                        numbersList[i + 1] *= operationsMap[operationList[i]]
+                            ?: throw Exception("Error in changing signs of numbers.")
+                    }
+                    outputText.text = numbersList.sum().toString()
+                } else {
+                    outputText.text = numbersList[0].toString()
                 }
-                outputText.text = numbersList.sum().toString()
             }
         }
     }
