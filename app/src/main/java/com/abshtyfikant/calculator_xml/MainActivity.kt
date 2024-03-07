@@ -1,7 +1,10 @@
 package com.abshtyfikant.calculator_xml
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -41,6 +44,7 @@ class MainActivity : AppCompatActivity() {
 
         //data variables
         var inputString = ""
+        var inputSpannableString = SpannableStringBuilder("")
         val operators = "+-*/"
         val operationsMap = mapOf("+" to 1, "-" to -1)
 
@@ -64,47 +68,47 @@ class MainActivity : AppCompatActivity() {
         //digits
         oneButton.setOnClickListener {
             inputString += "1"
-            inputText.text = inputString
+            inputText.text = inputSpannableString.append("1")
         }
 
         twoButton.setOnClickListener {
             inputString += "2"
-            inputText.text = inputString
+            inputText.text = inputSpannableString.append("2")
         }
 
         threeButton.setOnClickListener {
             inputString += "3"
-            inputText.text = inputString
+            inputText.text = inputSpannableString.append("3")
         }
 
         fourButton.setOnClickListener {
             inputString += "4"
-            inputText.text = inputString
+            inputText.text = inputSpannableString.append("4")
         }
 
         fiveButton.setOnClickListener {
             inputString += "5"
-            inputText.text = inputString
+            inputText.text = inputSpannableString.append("5")
         }
 
         sixButton.setOnClickListener {
             inputString += "6"
-            inputText.text = inputString
+            inputText.text = inputSpannableString.append("6")
         }
 
         sevenButton.setOnClickListener {
             inputString += "7"
-            inputText.text = inputString
+            inputText.text = inputSpannableString.append("7")
         }
 
         eightButton.setOnClickListener {
             inputString += "8"
-            inputText.text = inputString
+            inputText.text = inputSpannableString.append("8")
         }
 
         nineButton.setOnClickListener {
             inputString += "9"
-            inputText.text = inputString
+            inputText.text = inputSpannableString.append("9")
         }
 
         zeroButton.setOnClickListener {
@@ -112,7 +116,7 @@ class MainActivity : AppCompatActivity() {
                 errorToast()
             } else {
                 inputString += "0"
-                inputText.text = inputString
+                inputText.text = inputSpannableString.append("0")
             }
         }
 
@@ -122,7 +126,11 @@ class MainActivity : AppCompatActivity() {
                 errorToast()
             } else {
                 inputString += "*"
-                inputText.text = inputString
+                val lastIndex = inputString.length - 1
+                inputSpannableString.append("*")
+                val operatorColor = ForegroundColorSpan(Color.RED)
+                inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
+                inputText.text = inputSpannableString
             }
         }
 
@@ -131,7 +139,11 @@ class MainActivity : AppCompatActivity() {
                 errorToast()
             } else {
                 inputString += "/"
-                inputText.text = inputString
+                val lastIndex = inputString.length - 1
+                inputSpannableString.append("/")
+                val operatorColor = ForegroundColorSpan(Color.RED)
+                inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
+                inputText.text = inputSpannableString
             }
         }
 
@@ -140,7 +152,11 @@ class MainActivity : AppCompatActivity() {
                 errorToast()
             } else {
                 inputString += "-"
-                inputText.text = inputString
+                val lastIndex = inputString.length - 1
+                inputSpannableString.append("-")
+                val operatorColor = ForegroundColorSpan(Color.RED)
+                inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
+                inputText.text = inputSpannableString
             }
         }
 
@@ -149,7 +165,11 @@ class MainActivity : AppCompatActivity() {
                 errorToast()
             } else {
                 inputString += "+"
-                inputText.text = inputString
+                val lastIndex = inputString.length - 1
+                inputSpannableString.append("+")
+                val operatorColor = ForegroundColorSpan(Color.RED)
+                inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
+                inputText.text = inputSpannableString
             }
         }
 
@@ -158,14 +178,17 @@ class MainActivity : AppCompatActivity() {
             if(inputString.isEmpty()){
                 errorToast()
             } else {
+                val lastIndex = inputString.length - 1
                 val temp = inputString.dropLast(1)
                 inputString = temp
-                inputText.text = inputString
+                inputSpannableString.delete(lastIndex, lastIndex + 1)
+                inputText.text = inputSpannableString
             }
         }
 
         clearButton.setOnClickListener{
             inputString = ""
+            inputSpannableString = SpannableStringBuilder("")
             inputText.text = ""
             outputText.text = ""
         }
