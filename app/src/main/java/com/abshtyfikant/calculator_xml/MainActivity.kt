@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -134,12 +135,14 @@ class MainActivity : AppCompatActivity() {
 
         //operators
         multiplicationButton.setOnClickListener{
-            if (inputString.last() in operators || inputString.isEmpty()) {
+            if (inputString.isEmpty())
                 errorToast()
-            } else {
+            else if (inputString.last() in operators)
+                errorToast()
+            else {
                 inputString += "*"
-                val lastIndex = inputString.length - 1
                 inputSpannableString.append("*")
+                val lastIndex = inputSpannableString.length - 1
                 val operatorColor = ForegroundColorSpan(Color.RED)
                 inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
                 inputText.text = inputSpannableString
@@ -147,12 +150,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         divisionButton.setOnClickListener{
-            if (inputString.last() in operators || inputString.isEmpty()) {
+            if (inputString.isEmpty())
                 errorToast()
-            } else {
+            else if (inputString.last() in operators)
+                errorToast()
+            else {
                 inputString += "/"
-                val lastIndex = inputString.length - 1
                 inputSpannableString.append("/")
+                val lastIndex = inputSpannableString.length - 1
                 val operatorColor = ForegroundColorSpan(Color.RED)
                 inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
                 inputText.text = inputSpannableString
@@ -160,12 +165,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         subtractionButton.setOnClickListener{
-            if (inputString.last() in operators || inputString.isEmpty()) {
+            if (inputString.isNotEmpty() && inputString.last() in operators)
                 errorToast()
-            } else {
-                inputString += "-"
-                val lastIndex = inputString.length - 1
+            else {
+                inputString += if(inputString.isEmpty()) "0-" else "-"
                 inputSpannableString.append("-")
+                val lastIndex = inputSpannableString.length - 1
                 val operatorColor = ForegroundColorSpan(Color.RED)
                 inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
                 inputText.text = inputSpannableString
@@ -173,12 +178,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         additionButton.setOnClickListener{
-            if (inputString.last() in operators || inputString.isEmpty()) {
+            if (inputString.isEmpty())
                 errorToast()
-            } else {
+            else if (inputString.last() in operators)
+                errorToast()
+            else {
                 inputString += "+"
-                val lastIndex = inputString.length - 1
                 inputSpannableString.append("+")
+                val lastIndex = inputSpannableString.length - 1
                 val operatorColor = ForegroundColorSpan(Color.RED)
                 inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
                 inputText.text = inputSpannableString
@@ -190,7 +197,7 @@ class MainActivity : AppCompatActivity() {
             if(inputString.isEmpty()){
                 errorToast()
             } else {
-                val lastIndex = inputString.length - 1
+                val lastIndex = inputSpannableString.length - 1
                 val temp = inputString.dropLast(1)
                 inputString = temp
                 inputSpannableString.delete(lastIndex, lastIndex + 1)
@@ -206,7 +213,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         resultButton.setOnClickListener{
-            if(inputString.last() in operators) outputText.text = inputString.dropLast(1)
+            if(inputString.isEmpty())
+                errorToast()
+            else if(inputString.last() in operators) outputText.text = inputString.dropLast(1)
             else if (inputString.count {it in operators} < 1) outputText.text = inputString
             else{
                 val operationList = Regex("[+\\-*/]").findAll(inputString)
