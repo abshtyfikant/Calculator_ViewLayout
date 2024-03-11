@@ -125,12 +125,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         commaButton.setOnClickListener {
-            if (inputString.isEmpty()){
-                errorToast()
-            } else {
-                inputString += "."
-                inputText.text = inputSpannableString.append(",")
-            }
+            if (inputString.isEmpty() || inputSpannableString.toString().last() in operators)
+                inputSpannableString.append("0")
+            inputString += "."
+            inputText.text = inputSpannableString.append(",")
         }
 
         //operators
