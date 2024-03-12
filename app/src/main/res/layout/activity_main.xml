@@ -223,6 +223,17 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_subtract" />
 
     <Button
+        android:id="@+id/btn_comma"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text=","
+        app:layout_constraintEnd_toStartOf="@+id/btn_0"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_subtract" />
+
+    <Button
         android:id="@+id/btn_result"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

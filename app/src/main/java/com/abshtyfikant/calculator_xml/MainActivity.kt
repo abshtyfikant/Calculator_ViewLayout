@@ -1,15 +1,18 @@
 package com.abshtyfikant.calculator_xml
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         val eightButton = findViewById<Button>(R.id.btn_8)
         val nineButton = findViewById<Button>(R.id.btn_9)
         val zeroButton = findViewById<Button>(R.id.btn_0)
+        val commaButton = findViewById<Button>(R.id.btn_comma)
 
         //operations
         val divisionButton = findViewById<Button>(R.id.btn_divide)
@@ -46,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         var inputString = ""
         var inputSpannableString = SpannableStringBuilder("")
         val operators = "+-*/"
-        val operationsMap = mapOf("+" to 1, "-" to -1)
+        val operationsMap = mapOf("+" to 1.0, "-" to -1.0)
 
         //Toast error message
         fun errorToast(){
@@ -56,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         //Convert string to operator
-        fun operatorFromString(sign: String): (Int, Int) -> Int{
+        fun operatorFromString(sign: String): (Double, Double) -> Double{
             return when(sign){
                 "*" -> {a, b -> a * b}
                 "/" -> {a, b -> a / b}
@@ -120,14 +124,23 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        commaButton.setOnClickListener {
+            if (inputString.isEmpty() || inputSpannableString.toString().last() in operators)
+                inputSpannableString.append("0")
+            inputString += "."
+            inputText.text = inputSpannableString.append(",")
+        }
+
         //operators
         multiplicationButton.setOnClickListener{
-            if (inputString.last() in operators || inputString.isEmpty()) {
+            if (inputString.isEmpty())
                 errorToast()
-            } else {
+            else if (inputString.last() in operators)
+                errorToast()
+            else {
                 inputString += "*"
-                val lastIndex = inputString.length - 1
                 inputSpannableString.append("*")
+                val lastIndex = inputSpannableString.length - 1
                 val operatorColor = ForegroundColorSpan(Color.RED)
                 inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
                 inputText.text = inputSpannableString
@@ -135,12 +148,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         divisionButton.setOnClickListener{
-            if (inputString.last() in operators || inputString.isEmpty()) {
+            if (inputString.isEmpty())
                 errorToast()
-            } else {
+            else if (inputString.last() in operators)
+                errorToast()
+            else {
                 inputString += "/"
-                val lastIndex = inputString.length - 1
                 inputSpannableString.append("/")
+                val lastIndex = inputSpannableString.length - 1
                 val operatorColor = ForegroundColorSpan(Color.RED)
                 inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
                 inputText.text = inputSpannableString
@@ -148,12 +163,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         subtractionButton.setOnClickListener{
-            if (inputString.last() in operators || inputString.isEmpty()) {
+            if (inputString.isNotEmpty() && inputString.last() in operators)
                 errorToast()
-            } else {
-                inputString += "-"
-                val lastIndex = inputString.length - 1
+            else {
+                inputString += if(inputString.isEmpty()) "0-" else "-"
                 inputSpannableString.append("-")
+                val lastIndex = inputSpannableString.length - 1
                 val operatorColor = ForegroundColorSpan(Color.RED)
                 inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
                 inputText.text = inputSpannableString
@@ -161,12 +176,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         additionButton.setOnClickListener{
-            if (inputString.last() in operators || inputString.isEmpty()) {
+            if (inputString.isEmpty())
                 errorToast()
-            } else {
+            else if (inputString.last() in operators)
+                errorToast()
+            else {
                 inputString += "+"
-                val lastIndex = inputString.length - 1
                 inputSpannableString.append("+")
+                val lastIndex = inputSpannableString.length - 1
                 val operatorColor = ForegroundColorSpan(Color.RED)
                 inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
                 inputText.text = inputSpannableString
@@ -178,7 +195,7 @@ class MainActivity : AppCompatActivity() {
             if(inputString.isEmpty()){
                 errorToast()
             } else {
-                val lastIndex = inputString.length - 1
+                val lastIndex = inputSpannableString.length - 1
                 val temp = inputString.dropLast(1)
                 inputString = temp
                 inputSpannableString.delete(lastIndex, lastIndex + 1)
@@ -194,17 +211,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         resultButton.setOnClickListener{
-            if(inputString.last() in operators) outputText.text = inputString.dropLast(1)
+            if(inputString.isEmpty())
+                errorToast()
+            else if(inputString.last() in operators) outputText.text = inputString.dropLast(1)
             else if (inputString.count {it in operators} < 1) outputText.text = inputString
             else{
                 val operationList = Regex("[+\\-*/]").findAll(inputString)
                     .map { it.value }
                     .toMutableList()
-                val numbersList = mutableListOf<Int>()
+                val numbersList = mutableListOf<Double>()
 
                 val tempNumbersList = inputString.split(Regex("[" + Regex.escape(operators) + "]"))
                 for(i in tempNumbersList) {
-                    numbersList.add(i.toInt())
+                    numbersList.add(i.toDouble())
                 }
 
                 val isDivOrMult = operationList.find{it == "*" || it == "/"} ?: ""
@@ -217,7 +236,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     for (i in operatorIndices){
                         numbersList[i+1] = operatorFromString(operationList[i]).invoke(
-                            numbersList[i], numbersList[i+1])
+                            numbersList[i], numbersList[i+1]).toDouble()
                     }
                     for ((foo, i) in operatorIndices.withIndex()){
                         numbersList.removeAt(i - foo)
@@ -229,9 +248,9 @@ class MainActivity : AppCompatActivity() {
                         numbersList[i + 1] *= operationsMap[operationList[i]]
                             ?: throw Exception("Error in changing signs of numbers.")
                     }
-                    outputText.text = numbersList.sum().toString()
+                    outputText.text = numbersList.sum().toString().replace(".", ",")
                 } else {
-                    outputText.text = numbersList[0].toString()
+                    outputText.text = numbersList[0].toString().replace(".", ",")
                 }
             }
         }
