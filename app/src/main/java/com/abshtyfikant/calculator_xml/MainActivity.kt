@@ -54,8 +54,12 @@ class MainActivity : AppCompatActivity() {
 
         //Toast error message
         fun errorToast(){
-            val msg = if(inputString.isEmpty()) "Input some numbers first!"
-                else "Can't use an operator here."
+            val msg = when {
+                inputString.isEmpty() -> "Input some numbers first!"
+                inputString.last() == '.' -> "Can't input second decimal separator here!"
+                !inputString.last().isDigit() -> "An expression must end with a number!"
+                else -> "Can't use an operator here."
+            }
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         }
 
@@ -125,17 +129,24 @@ class MainActivity : AppCompatActivity() {
         }
 
         commaButton.setOnClickListener {
-            if (inputString.isEmpty() || inputSpannableString.toString().last() in operators)
-                inputSpannableString.append("0")
-            inputString += "."
-            inputText.text = inputSpannableString.append(",")
+            if (inputString.isEmpty() || inputSpannableString.toString().last() in operators) {
+                inputText.text = inputSpannableString.append("0,")
+                inputString += "0."
+            }
+            else if (inputString.substringAfterLast('.').any {it in operators}
+                || inputString.none {it in "."}) {
+                inputString += "."
+                inputText.text = inputSpannableString.append(",")
+            }
+            else
+                errorToast()
         }
 
         //operators
         multiplicationButton.setOnClickListener{
             if (inputString.isEmpty())
                 errorToast()
-            else if (inputString.last() in operators)
+            else if (inputString.last() in "$operators,")
                 errorToast()
             else {
                 inputString += "*"
@@ -150,7 +161,7 @@ class MainActivity : AppCompatActivity() {
         divisionButton.setOnClickListener{
             if (inputString.isEmpty())
                 errorToast()
-            else if (inputString.last() in operators)
+            else if (inputString.last() in "$operators,")
                 errorToast()
             else {
                 inputString += "/"
@@ -163,7 +174,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         subtractionButton.setOnClickListener{
-            if (inputString.isNotEmpty() && inputString.last() in operators)
+            if (inputString.isNotEmpty() && inputString.last() in "$operators,")
                 errorToast()
             else {
                 inputString += if(inputString.isEmpty()) "0-" else "-"
@@ -178,7 +189,7 @@ class MainActivity : AppCompatActivity() {
         additionButton.setOnClickListener{
             if (inputString.isEmpty())
                 errorToast()
-            else if (inputString.last() in operators)
+            else if (inputString.last() in "$operators,")
                 errorToast()
             else {
                 inputString += "+"
@@ -211,7 +222,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         resultButton.setOnClickListener{
-            if(inputString.isEmpty())
+            if(inputString.isEmpty() || !inputString.last().isDigit())
                 errorToast()
             else if(inputString.last() in operators) outputText.text = inputString.dropLast(1)
             else if (inputString.count {it in operators} < 1) outputText.text = inputString
@@ -236,7 +247,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     for (i in operatorIndices){
                         numbersList[i+1] = operatorFromString(operationList[i]).invoke(
-                            numbersList[i], numbersList[i+1]).toDouble()
+                            numbersList[i], numbersList[i+1])
                     }
                     for ((foo, i) in operatorIndices.withIndex()){
                         numbersList.removeAt(i - foo)
