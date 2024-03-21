@@ -52,12 +52,20 @@ class MainActivity : AppCompatActivity() {
         val operators = "+-*/"
         val operationsMap = mapOf("+" to 1.0, "-" to -1.0)
 
+
+        //Operand length control
+        fun isOperandLengthOk(): Boolean{
+            val temp = inputString.takeLast(10)
+            return temp.any {it in "$operators."} || temp.length < 10
+        }
+
         //Toast error message
         fun errorToast(){
             val msg = when {
                 inputString.isEmpty() -> "Input some numbers first!"
                 inputString.last() == '.' -> "Can't input second decimal separator here!"
                 !inputString.last().isDigit() -> "An expression must end with a number!"
+                !isOperandLengthOk() -> "Can't input more than 10 digits in one operand!"
                 else -> "Can't use an operator here."
             }
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
@@ -75,52 +83,88 @@ class MainActivity : AppCompatActivity() {
         //USER INPUT
         //digits
         oneButton.setOnClickListener {
-            inputString += "1"
-            inputText.text = inputSpannableString.append("1")
+            if(isOperandLengthOk()) {
+                inputString += "1"
+                inputText.text = inputSpannableString.append("1")
+            } else {
+                errorToast()
+            }
         }
 
         twoButton.setOnClickListener {
-            inputString += "2"
-            inputText.text = inputSpannableString.append("2")
+            if (isOperandLengthOk()) {
+                inputString += "2"
+                inputText.text = inputSpannableString.append("2")
+            } else {
+                errorToast()
+            }
         }
 
         threeButton.setOnClickListener {
-            inputString += "3"
-            inputText.text = inputSpannableString.append("3")
+            if (isOperandLengthOk()) {
+                inputString += "3"
+                inputText.text = inputSpannableString.append("3")
+            } else {
+                errorToast()
+            }
         }
 
         fourButton.setOnClickListener {
-            inputString += "4"
-            inputText.text = inputSpannableString.append("4")
+            if (isOperandLengthOk()) {
+                inputString += "4"
+                inputText.text = inputSpannableString.append("4")
+            } else {
+                errorToast()
+            }
         }
 
         fiveButton.setOnClickListener {
-            inputString += "5"
-            inputText.text = inputSpannableString.append("5")
+            if (isOperandLengthOk()) {
+                inputString += "5"
+                inputText.text = inputSpannableString.append("5")
+            } else {
+                errorToast()
+            }
         }
 
         sixButton.setOnClickListener {
-            inputString += "6"
-            inputText.text = inputSpannableString.append("6")
+            if (isOperandLengthOk()) {
+                inputString += "6"
+                inputText.text = inputSpannableString.append("6")
+            } else {
+                errorToast()
+            }
         }
 
         sevenButton.setOnClickListener {
-            inputString += "7"
-            inputText.text = inputSpannableString.append("7")
+            if (isOperandLengthOk()) {
+                inputString += "7"
+                inputText.text = inputSpannableString.append("7")
+            } else {
+                errorToast()
+            }
         }
 
         eightButton.setOnClickListener {
-            inputString += "8"
-            inputText.text = inputSpannableString.append("8")
+            if (isOperandLengthOk()) {
+                inputString += "8"
+                inputText.text = inputSpannableString.append("8")
+            } else {
+                errorToast()
+            }
         }
 
         nineButton.setOnClickListener {
-            inputString += "9"
-            inputText.text = inputSpannableString.append("9")
+            if (isOperandLengthOk()) {
+                inputString += "9"
+                inputText.text = inputSpannableString.append("9")
+            } else {
+                errorToast()
+            }
         }
 
         zeroButton.setOnClickListener {
-            if (inputString.isEmpty()) {
+            if (inputString.isEmpty() || inputString.last() in operators || !isOperandLengthOk()) {
                 errorToast()
             } else {
                 inputString += "0"
