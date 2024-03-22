@@ -82,86 +82,26 @@ class MainActivity : AppCompatActivity() {
 
         //USER INPUT
         //digits
-        oneButton.setOnClickListener {
-            if(isOperandLengthOk()) {
-                inputString += "1"
-                inputText.text = inputSpannableString.append("1")
-            } else {
-                errorToast()
+        fun setupDigitButton(button: Button, number: String) {
+            button.setOnClickListener {
+                if (isOperandLengthOk()) {
+                    inputString += number
+                    inputText.text = inputSpannableString.append(number)
+                } else {
+                    errorToast()
+                }
             }
         }
 
-        twoButton.setOnClickListener {
-            if (isOperandLengthOk()) {
-                inputString += "2"
-                inputText.text = inputSpannableString.append("2")
-            } else {
-                errorToast()
-            }
-        }
-
-        threeButton.setOnClickListener {
-            if (isOperandLengthOk()) {
-                inputString += "3"
-                inputText.text = inputSpannableString.append("3")
-            } else {
-                errorToast()
-            }
-        }
-
-        fourButton.setOnClickListener {
-            if (isOperandLengthOk()) {
-                inputString += "4"
-                inputText.text = inputSpannableString.append("4")
-            } else {
-                errorToast()
-            }
-        }
-
-        fiveButton.setOnClickListener {
-            if (isOperandLengthOk()) {
-                inputString += "5"
-                inputText.text = inputSpannableString.append("5")
-            } else {
-                errorToast()
-            }
-        }
-
-        sixButton.setOnClickListener {
-            if (isOperandLengthOk()) {
-                inputString += "6"
-                inputText.text = inputSpannableString.append("6")
-            } else {
-                errorToast()
-            }
-        }
-
-        sevenButton.setOnClickListener {
-            if (isOperandLengthOk()) {
-                inputString += "7"
-                inputText.text = inputSpannableString.append("7")
-            } else {
-                errorToast()
-            }
-        }
-
-        eightButton.setOnClickListener {
-            if (isOperandLengthOk()) {
-                inputString += "8"
-                inputText.text = inputSpannableString.append("8")
-            } else {
-                errorToast()
-            }
-        }
-
-        nineButton.setOnClickListener {
-            if (isOperandLengthOk()) {
-                inputString += "9"
-                inputText.text = inputSpannableString.append("9")
-            } else {
-                errorToast()
-            }
-        }
+        setupDigitButton(oneButton, "1")
+        setupDigitButton(twoButton, "2")
+        setupDigitButton(threeButton, "3")
+        setupDigitButton(fourButton, "4")
+        setupDigitButton(fiveButton, "5")
+        setupDigitButton(sixButton, "6")
+        setupDigitButton(sevenButton, "7")
+        setupDigitButton(eightButton, "8")
+        setupDigitButton(nineButton, "9")
 
         zeroButton.setOnClickListener {
             if (inputString.isEmpty() || inputString.last() in operators || !isOperandLengthOk()) {
@@ -187,42 +127,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         //operators
-        multiplicationButton.setOnClickListener{
-            if (inputString.isEmpty())
-                errorToast()
-            else if (inputString.last() in "$operators,")
-                errorToast()
-            else {
-                inputString += "*"
-                inputSpannableString.append("*")
-                val lastIndex = inputSpannableString.length - 1
-                val operatorColor = ForegroundColorSpan(Color.RED)
-                inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
-                inputText.text = inputSpannableString
-            }
-        }
-
-        divisionButton.setOnClickListener{
-            if (inputString.isEmpty())
-                errorToast()
-            else if (inputString.last() in "$operators,")
-                errorToast()
-            else {
-                inputString += "/"
-                inputSpannableString.append("/")
-                val lastIndex = inputSpannableString.length - 1
-                val operatorColor = ForegroundColorSpan(Color.RED)
-                inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
-                inputText.text = inputSpannableString
-            }
-        }
-
-        subtractionButton.setOnClickListener{
+        fun setupOperatorButton(operator: String) {
             if (inputString.isNotEmpty() && inputString.last() in "$operators,")
                 errorToast()
             else {
-                inputString += if(inputString.isEmpty()) "0-" else "-"
-                inputSpannableString.append("-")
+                inputString += operator
+                inputSpannableString.append(operator)
                 val lastIndex = inputSpannableString.length - 1
                 val operatorColor = ForegroundColorSpan(Color.RED)
                 inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
@@ -230,20 +140,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        additionButton.setOnClickListener{
-            if (inputString.isEmpty())
-                errorToast()
-            else if (inputString.last() in "$operators,")
-                errorToast()
-            else {
-                inputString += "+"
-                inputSpannableString.append("+")
-                val lastIndex = inputSpannableString.length - 1
-                val operatorColor = ForegroundColorSpan(Color.RED)
-                inputSpannableString.setSpan(operatorColor, lastIndex, lastIndex + 1, 0)
-                inputText.text = inputSpannableString
-            }
-        }
+        multiplicationButton.setOnClickListener { setupOperatorButton("*") }
+        divisionButton.setOnClickListener { setupOperatorButton("/") }
+        subtractionButton.setOnClickListener { setupOperatorButton(if (inputString.isEmpty()) "0-" else "-") }
+        additionButton.setOnClickListener { setupOperatorButton("+") }
 
         //calculator control
         backspaceButton.setOnClickListener{
