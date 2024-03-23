@@ -8,6 +8,7 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
         //calculator control
         val clearButton = findViewById<Button>(R.id.btn_clear)
-        val backspaceButton = findViewById<Button>(R.id.btn_backspace)
+        val backspaceButton = findViewById<ImageButton>(R.id.btn_backspace)
         val resultButton = findViewById<Button>(R.id.btn_result)
 
         //textViews
